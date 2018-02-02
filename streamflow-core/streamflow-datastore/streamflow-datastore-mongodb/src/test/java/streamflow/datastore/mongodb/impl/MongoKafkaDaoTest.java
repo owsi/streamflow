@@ -37,7 +37,7 @@ public class MongoKafkaDaoTest {
     
     @Before
     public void setUp() {
-        Datastore datastore = new Morphia().createDatastore(fongoRule.getMongo(), "streamflow");
+        Datastore datastore = new Morphia().createDatastore(fongoRule.getMongoClient(), "streamflow");
         
         kafkaDao = new MongoKafkaDao(datastore);
         

@@ -38,7 +38,7 @@ public class MongoTopologyDaoTest {
     
     @Before
     public void setUp() {
-        Datastore datastore = new Morphia().createDatastore(fongoRule.getMongo(), "streamflow");
+        Datastore datastore = new Morphia().createDatastore(fongoRule.getMongoClient(), "streamflow");
         
         topologyDao = new MongoTopologyDao(datastore);
         

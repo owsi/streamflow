@@ -1,6 +1,6 @@
 package streamflow.engine.topology;
 
-import backtype.storm.generated.StormTopology;
+import org.apache.storm.generated.StormTopology;
 import streamflow.engine.framework.FrameworkException;
 import streamflow.model.Topology;
 import streamflow.model.config.StreamflowConfig;

@@ -22,8 +22,8 @@ import streamflow.model.TopologyComponent;
 import streamflow.model.config.StreamflowConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import storm.trident.operation.ReducerAggregator;
-import storm.trident.tuple.TridentTuple;
+import org.apache.storm.trident.operation.ReducerAggregator;
+import org.apache.storm.trident.tuple.TridentTuple;
 
 public class ReducerAggregatorWrapper extends BaseWrapper<ReducerAggregator> implements ReducerAggregator {
 

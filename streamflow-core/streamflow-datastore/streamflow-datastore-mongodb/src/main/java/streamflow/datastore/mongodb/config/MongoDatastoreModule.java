@@ -89,7 +89,8 @@ public class MongoDatastoreModule extends AbstractModule {
         Integer acceptableLatencyDifference = 
                 datastoreConfig.getProperty("acceptableLatencyDifference", Integer.class);
         if (acceptableLatencyDifference != null) {
-            clientOptions.acceptableLatencyDifference(acceptableLatencyDifference);
+            //clientOptions.acceptableLatencyDifference(acceptableLatencyDifference);
+            LOG.warn("acceptableLatencyDifference no longer used");
         }
 
         Integer connectTimeout = 
@@ -113,7 +114,8 @@ public class MongoDatastoreModule extends AbstractModule {
         Integer heartbeatConnectRetryFrequency = 
                 datastoreConfig.getProperty("heartbeatConnectRetryFrequency", Integer.class);
         if (heartbeatConnectRetryFrequency != null) {
-            clientOptions.heartbeatConnectRetryFrequency(heartbeatConnectRetryFrequency);
+            //clientOptions.hheartbeatConnectRetryFrequency(heartbeatConnectRetryFrequency);
+            LOG.warn("heartbeatConnectRetryFrequency no longer used");
         }
 
         Integer heartbeatConnectTimeout = 
@@ -137,7 +139,8 @@ public class MongoDatastoreModule extends AbstractModule {
         Integer heartbeatThreadCount = 
                 datastoreConfig.getProperty("heartbeatThreadCount", Integer.class);
         if (heartbeatThreadCount != null) {
-            clientOptions.heartbeatThreadCount(heartbeatThreadCount);
+            // clientOptions.heartbeatThreadCount(heartbeatThreadCount);
+            LOG.warn("heartbeatThreadCount no longer used");
         }
 
         Integer maxConnectionIdleTime = 
@@ -183,21 +186,17 @@ public class MongoDatastoreModule extends AbstractModule {
                     threadsAllowedToBlockForConnectionMultiplier);
         }
 
-        try {
-            ServerAddress serverAddress = new ServerAddress(
-                    serverAddressHost, serverAddressPort);
+        ServerAddress serverAddress = new ServerAddress(
+                serverAddressHost, serverAddressPort);
 
-            // Initialize the Mongo connection with the specified address and options
-            mongoClient = new MongoClient(serverAddress, clientOptions.build());
-        } catch (UnknownHostException ex) {
-            LOG.error("Exception occurred while building Mongo client connection", ex);
-        }
-        
+        // Initialize the Mongo connection with the specified address and options
+        mongoClient = new MongoClient(serverAddress, clientOptions.build());
+
         return mongoClient;
     }
     
     @Provides
-    public Datastore providesMorphiaDatastore(Mongo mongo, DatastoreConfig datastoreConfig) {
+    public Datastore providesMorphiaDatastore(MongoClient mongo, DatastoreConfig datastoreConfig) {
         String dbName = datastoreConfig.getProperty("dbName", String.class);
         if (dbName == null || dbName.isEmpty()) {
             dbName = "streamflow";

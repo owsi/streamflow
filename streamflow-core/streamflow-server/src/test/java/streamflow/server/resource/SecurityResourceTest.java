@@ -30,6 +30,8 @@ import com.sun.jersey.test.framework.spi.container.TestContainerFactory;
 import com.sun.jersey.test.framework.spi.container.grizzly.web.GrizzlyWebTestContainerFactory;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
+
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import streamflow.model.User;
 import streamflow.model.generator.RandomGenerator;
 import streamflow.model.test.IntegrationTest;
@@ -52,6 +54,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(SecurityUtils.class)
 @Category(IntegrationTest.class)
+@PowerMockIgnore("javax.management.*")
 public class SecurityResourceTest extends JerseyTest {
 
     public static UserService userServiceMock;

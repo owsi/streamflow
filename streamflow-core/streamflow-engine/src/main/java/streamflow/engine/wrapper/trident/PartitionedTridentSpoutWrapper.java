@@ -15,8 +15,8 @@
  */
 package streamflow.engine.wrapper.trident;
 
-import backtype.storm.task.TopologyContext;
-import backtype.storm.tuple.Fields;
+import org.apache.storm.task.TopologyContext;
+import org.apache.storm.tuple.Fields;
 import java.util.HashMap;
 import java.util.Map;
 import streamflow.engine.framework.FrameworkException;
@@ -27,7 +27,7 @@ import streamflow.model.config.StreamflowConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-import storm.trident.spout.IPartitionedTridentSpout;
+import org.apache.storm.trident.spout.IPartitionedTridentSpout;
 
 public class PartitionedTridentSpoutWrapper extends BaseWrapper<IPartitionedTridentSpout>
         implements IPartitionedTridentSpout {

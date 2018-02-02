@@ -15,6 +15,7 @@
  */
 package streamflow.server.security;
 
+import org.elasticsearch.common.util.set.Sets;
 import streamflow.model.Role;
 import streamflow.model.User;
 import streamflow.service.RoleService;
@@ -24,7 +25,6 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
-import org.elasticsearch.common.collect.Sets;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Rule;

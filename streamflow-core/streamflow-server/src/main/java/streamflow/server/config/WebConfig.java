@@ -23,7 +23,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.annotation.WebListener;
 
-import org.apache.storm.guava.util.concurrent.ServiceManager;
+import org.apache.storm.shade.com.google.common.util.concurrent.ServiceManager ;
 import streamflow.datastore.config.DatastoreModule;
 import streamflow.engine.config.EngineModule;
 import streamflow.server.service.TopologyMonitorService;
