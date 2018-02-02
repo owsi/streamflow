@@ -37,7 +37,7 @@ public class MongoComponentDaoTest {
     
     @Before
     public void setUp() {
-        Datastore datastore = new Morphia().createDatastore(fongoRule.getMongo(), "streamflow");
+        Datastore datastore = new Morphia().createDatastore(fongoRule.getMongoClient(), "streamflow");
         
         componentDao = new MongoComponentDao(datastore);
         

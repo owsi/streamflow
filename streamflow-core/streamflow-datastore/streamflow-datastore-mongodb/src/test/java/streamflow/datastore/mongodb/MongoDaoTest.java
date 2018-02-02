@@ -60,7 +60,7 @@ public class MongoDaoTest {
         mockedObject.put("byteArrayField", mockedEntity.getByteArrayField());
         collection.save(mockedObject);
         
-        Datastore datastore = new Morphia().createDatastore(fongoRule.getMongo(), "streamflow");
+        Datastore datastore = new Morphia().createDatastore(fongoRule.getMongoClient(), "streamflow");
         
         mongoDao = new MongoDao<TestEntity, String>(datastore, TestEntity.class);
     }

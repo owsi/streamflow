@@ -15,7 +15,7 @@
  */
 package streamflow.engine.config;
 
-import backtype.storm.LocalCluster;
+import org.apache.storm.LocalCluster;
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 import streamflow.engine.StormEngine;

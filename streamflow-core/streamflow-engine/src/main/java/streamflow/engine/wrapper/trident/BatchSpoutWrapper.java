@@ -15,8 +15,8 @@
  */
 package streamflow.engine.wrapper.trident;
 
-import backtype.storm.task.TopologyContext;
-import backtype.storm.tuple.Fields;
+import org.apache.storm.task.TopologyContext;
+import org.apache.storm.tuple.Fields;
 import java.util.HashMap;
 import java.util.Map;
 import streamflow.engine.framework.FrameworkException;
@@ -27,8 +27,8 @@ import streamflow.model.TopologyComponent;
 import streamflow.model.config.StreamflowConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import storm.trident.operation.TridentCollector;
-import storm.trident.spout.IBatchSpout;
+import org.apache.storm.trident.operation.TridentCollector;
+import org.apache.storm.trident.spout.IBatchSpout;
 
 public class BatchSpoutWrapper extends BaseWrapper<IBatchSpout> implements IBatchSpout {
 

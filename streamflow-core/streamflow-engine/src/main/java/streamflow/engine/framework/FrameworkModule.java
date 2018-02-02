@@ -15,7 +15,8 @@
  */
 package streamflow.engine.framework;
 
-import backtype.storm.task.TopologyContext;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.storm.task.TopologyContext;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
@@ -34,15 +35,15 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 public class FrameworkModule extends AbstractModule {
-    
+
     private final org.slf4j.Logger LOG = LoggerFactory.getLogger(FrameworkModule.class);
 
     private final Topology topology;
-    
+
     private final TopologyComponent component;
-    
+
     private final StreamflowConfig streamflowConfig;
-    
+
     private final TopologyContext context;
 
     public FrameworkModule(Topology topology, TopologyComponent component,
@@ -91,43 +92,48 @@ public class FrameworkModule extends AbstractModule {
         //bindConstant().annotatedWith(
         //        Names.named("streamflow.cluster.name")).to(topology.getClusterName());
     }
-    
+
     @Provides
     public org.slf4j.Logger provideLogger() {
-        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-        
-        PatternLayout patternLayout = new PatternLayout();
-        patternLayout.setPattern(streamflowConfig.getLogger().getFormatPattern());
-        patternLayout.setContext(loggerContext);
-        patternLayout.start();
-        
-        String logPath = streamflowConfig.getLogger().getBaseDir() 
-                + File.separator + "topology-" + topology.getId() + ".log";
 
-        FileAppender<ILoggingEvent> fileAppender = new FileAppender<>();
-        fileAppender.setName("FILE");
-        fileAppender.setFile(logPath);
-        fileAppender.setContext(loggerContext);
-        fileAppender.setLayout(patternLayout);
-        fileAppender.setAppend(true);
-        fileAppender.start();
-        
-        Logger logger = loggerContext.getLogger(component.getMainClass());
-        logger.detachAndStopAllAppenders();
-        logger.addAppender(fileAppender);
-        logger.setAdditive(false);
-        logger.setLevel(Level.toLevel(topology.getLogLevel()));
-        
-        // Set the context for the topology/component when logging
-        MDC.put("topology", topology.getId());
-        MDC.put("project", topology.getProjectId());
-        MDC.put("component", component.getKey());
-        if (context != null) {
-            MDC.put("task", component.getName() + "-" + context.getThisTaskIndex());
-        } else {
-            MDC.put("task", component.getName());
-        }
-        
+//        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+//        LoggerContext loggerContext = new LoggerContext();
+//        PatternLayout patternLayout = new PatternLayout();
+//        patternLayout.setPattern(streamflowConfig.getLogger().getFormatPattern());
+//        patternLayout.setContext(loggerContext);
+//        patternLayout.start();
+//
+//        String logPath = streamflowConfig.getLogger().getBaseDir()
+//                + File.separator + "topology-" + topology.getId() + ".log";
+//
+//        LOG.info("setting topic logging path to {}", logPath);
+//
+//        FileAppender<ILoggingEvent> fileAppender = new FileAppender<>();
+//        fileAppender.setName("FILE");
+//        fileAppender.setFile(logPath);
+//        fileAppender.setContext(loggerContext);
+//        fileAppender.setLayout(patternLayout);
+//        fileAppender.setAppend(true);
+//        fileAppender.start();
+//
+//        Logger logger = loggerContext.getLogger(component.getMainClass());
+//        logger.detachAndStopAllAppenders();
+//        logger.addAppender(fileAppender);
+//        logger.setAdditive(false);
+//        logger.setLevel(Level.toLevel(topology.getLogLevel()));
+
+        org.slf4j.Logger logger = LoggerFactory.getLogger(component.getMainClass());
+
+// Set the context for the topology/component when logging
+//        MDC.put("topology", topology.getId());
+//        MDC.put("project", topology.getProjectId());
+//        MDC.put("component", component.getKey());
+//        if (context != null) {
+//            MDC.put("task", component.getName() + "-" + context.getThisTaskIndex());
+//        } else {
+//            MDC.put("task", component.getName());
+//        }
+
         return logger;
     }
 }

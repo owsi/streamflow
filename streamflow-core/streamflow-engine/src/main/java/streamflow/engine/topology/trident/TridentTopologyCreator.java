@@ -1,7 +1,7 @@
 package streamflow.engine.topology.trident;
 
-import backtype.storm.generated.StormTopology;
-import backtype.storm.tuple.Fields;
+import org.apache.storm.generated.StormTopology;
+import org.apache.storm.tuple.Fields;
 import java.util.ArrayList;
 import java.util.List;
 import streamflow.engine.framework.FrameworkException;
@@ -23,11 +23,11 @@ import streamflow.model.config.StreamflowConfig;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import storm.trident.Stream;
-import storm.trident.TridentTopology;
-import storm.trident.fluent.ChainedAggregatorDeclarer;
-import storm.trident.fluent.GroupedStream;
-import storm.trident.fluent.IAggregatableStream;
+import org.apache.storm.trident.Stream;
+import org.apache.storm.trident.TridentTopology;
+import org.apache.storm.trident.fluent.ChainedAggregatorDeclarer;
+import org.apache.storm.trident.fluent.GroupedStream;
+import org.apache.storm.trident.fluent.IAggregatableStream;
 
 public class TridentTopologyCreator implements TopologyCreator {
     
