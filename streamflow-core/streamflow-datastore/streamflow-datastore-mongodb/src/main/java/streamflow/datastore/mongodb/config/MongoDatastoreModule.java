@@ -20,6 +20,7 @@ import com.google.inject.Provides;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoClientURI;
 import com.mongodb.ServerAddress;
 import java.net.UnknownHostException;
 import streamflow.datastore.core.ComponentDao;
@@ -72,8 +73,15 @@ public class MongoDatastoreModule extends AbstractModule {
     }
     
     @Provides
-    public Mongo providesMongoClient(DatastoreConfig datastoreConfig) {
-        MongoClient mongoClient = null;
+    public MongoClient providesMongoClient(DatastoreConfig datastoreConfig) {
+
+        String mongoUri = datastoreConfig.getProperty("uri", String.class);
+        if (mongoUri != null) {
+            LOG.info("initializing MongoDB using uri: {}", mongoUri);
+            MongoClientURI mongoClientURI = new MongoClientURI(mongoUri);
+            return new MongoClient(mongoClientURI);
+        }
+
         MongoClientOptions.Builder clientOptions = MongoClientOptions.builder();
         
         String serverAddressHost = datastoreConfig.getProperty("host", String.class);
@@ -186,13 +194,9 @@ public class MongoDatastoreModule extends AbstractModule {
                     threadsAllowedToBlockForConnectionMultiplier);
         }
 
-        ServerAddress serverAddress = new ServerAddress(
-                serverAddressHost, serverAddressPort);
-
-        // Initialize the Mongo connection with the specified address and options
-        mongoClient = new MongoClient(serverAddress, clientOptions.build());
-
-        return mongoClient;
+        ServerAddress serverAddress = new ServerAddress(serverAddressHost, serverAddressPort);
+        MongoClientOptions mongoClientOptions = clientOptions.build();
+        return new MongoClient(serverAddress, mongoClientOptions);
     }
     
     @Provides
