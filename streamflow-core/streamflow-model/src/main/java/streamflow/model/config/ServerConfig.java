@@ -16,10 +16,12 @@
 package streamflow.model.config;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class ServerConfig implements Serializable {
 
     private int port = 8080;
+    private String contextPath = "/";
 
     public ServerConfig() {
     }
@@ -38,30 +40,40 @@ public class ServerConfig implements Serializable {
         this.port = port;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 19 * hash + this.port;
-        return hash;
+    public String getContextPath() {
+        if (System.getProperty("server.contextPath") != null) {
+            try {
+                contextPath = System.getProperty("server.contextPath");
+            } catch (Exception ex) {
+            }
+        }
+        return contextPath;
+    }
+
+    public void setContextPath(String contextPath) {
+        this.contextPath = contextPath;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final ServerConfig other = (ServerConfig) obj;
-        if (this.port != other.port) {
-            return false;
-        }
-        return true;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ServerConfig that = (ServerConfig) o;
+        return port == that.port &&
+                Objects.equals(contextPath, that.contextPath);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(port, contextPath);
     }
 
     @Override
     public String toString() {
-        return "ServerConfig{ port=" + port + '}';
+        return "ServerConfig{" +
+                "port=" + port +
+                ", contextPath='" + contextPath + '\'' +
+                '}';
     }
 }
