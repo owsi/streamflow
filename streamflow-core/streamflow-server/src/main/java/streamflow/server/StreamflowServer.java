@@ -3,6 +3,8 @@ package streamflow.server;
 import com.google.inject.servlet.GuiceFilter;
 import java.util.EnumSet;
 import javax.servlet.DispatcherType;
+
+import streamflow.model.config.ServerConfig;
 import streamflow.model.config.StreamflowConfig;
 import streamflow.server.config.WebConfig;
 import streamflow.util.config.ConfigLoader;
@@ -22,18 +24,20 @@ public class StreamflowServer {
         long startTime = System.currentTimeMillis();
         
         StreamflowConfig streamflowConfig = ConfigLoader.getConfig();
-        
-        LOG.info("Streamflow Server: Binding server to port " + streamflowConfig.getServer().getPort());
+
+        ServerConfig serverConfig = streamflowConfig.getServer();
+        LOG.info("Streamflow Server: Binding server to port: {} with contextPath: {}",
+                serverConfig.getPort(), serverConfig.getContextPath());
         
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.setContextPath("/");
+        context.setContextPath(serverConfig.getContextPath());
         context.addEventListener(new WebConfig());
         context.addFilter(GuiceFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
         context.setWelcomeFiles(new String[]{ "index.htm", "index.html" });
         context.setBaseResource(Resource.newClassPathResource("/assets"));
         context.addServlet(DefaultServlet.class, "/*");
         
-        Server server = new Server(streamflowConfig.getServer().getPort());
+        Server server = new Server(serverConfig.getPort());
         server.setHandler(context);
         server.start();
         
