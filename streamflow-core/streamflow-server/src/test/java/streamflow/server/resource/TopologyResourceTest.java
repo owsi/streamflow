@@ -94,7 +94,11 @@ public class TopologyResourceTest extends JerseyTest {
     @Test
     public void updateTopologyWhileAuthenticated() {
         final Topology requestTopology = RandomGenerator.randomObject(Topology.class);
-        
+
+        Topology mockedOldTopology = RandomGenerator.randomObject(Topology.class);
+        doReturn(mockedOldTopology)
+                .when(topologyServiceMock)
+                .getTopology(requestTopology.getId(), TEST_SUBJECT_ID);
         doNothing()
                 .when(topologyServiceMock)
                 .updateTopology(requestTopology.getId(), requestTopology, TEST_SUBJECT_ID);
@@ -107,7 +111,11 @@ public class TopologyResourceTest extends JerseyTest {
         
         assertEquals("Response HTTP status code should be 200 (OK)", 
                 clientResponse.getStatus(), 200);
-        
+
+        requestTopology.setDeployedConfig(mockedOldTopology.getDeployedConfig());
+        requestTopology.setKilled(mockedOldTopology.getKilled());
+        requestTopology.setStatus(mockedOldTopology.getStatus());
+
         verify(topologyServiceMock)
                 .updateTopology(requestTopology.getId(), requestTopology, TEST_SUBJECT_ID);
     }

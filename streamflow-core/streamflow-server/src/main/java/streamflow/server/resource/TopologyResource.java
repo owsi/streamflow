@@ -37,6 +37,7 @@ import streamflow.model.TopologyLogPage;
 import streamflow.model.storm.TopologyInfo;
 import streamflow.service.TopologyService;
 import org.apache.shiro.SecurityUtils;
+import streamflow.service.exception.EntityNotFoundException;
 
 @Path("/topologies")
 public class TopologyResource {
@@ -76,7 +77,16 @@ public class TopologyResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateTopology(@PathParam("topologyId") String topologyId, Topology topology) {
         String userId = (String) SecurityUtils.getSubject().getPrincipal();
-        topologyService.updateTopology(topologyId, topology, userId);
+
+        try {
+            Topology oldTopology = topologyService.getTopology(topologyId, userId);
+            topology.setDeployedConfig(oldTopology.getDeployedConfig());
+            topology.setKilled(oldTopology.getKilled());
+            topology.setStatus(oldTopology.getStatus());
+            topologyService.updateTopology(topologyId, topology, userId);
+        } catch (EntityNotFoundException e) {
+            topologyService.createTopology(topology, userId);
+        }
 
         return Response.ok().build();
     }
