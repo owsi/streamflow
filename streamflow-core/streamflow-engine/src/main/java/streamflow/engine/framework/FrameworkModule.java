@@ -1,12 +1,12 @@
 /**
  * Copyright 2014 Lockheed Martin Corporation
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,28 +15,21 @@
  */
 package streamflow.engine.framework;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.storm.task.TopologyContext;
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.PatternLayout;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.FileAppender;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
-import java.io.File;
-import java.util.Map.Entry;
+import org.apache.storm.task.TopologyContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import streamflow.model.Topology;
 import streamflow.model.TopologyComponent;
 import streamflow.model.config.StreamflowConfig;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
+
+import java.util.Map.Entry;
 
 public class FrameworkModule extends AbstractModule {
 
-    private final org.slf4j.Logger LOG = LoggerFactory.getLogger(FrameworkModule.class);
+    private final Logger LOG = LoggerFactory.getLogger(FrameworkModule.class);
 
     private final Topology topology;
 
@@ -47,7 +40,7 @@ public class FrameworkModule extends AbstractModule {
     private final TopologyContext context;
 
     public FrameworkModule(Topology topology, TopologyComponent component,
-            StreamflowConfig streamflowConfig, TopologyContext context) {
+                           StreamflowConfig streamflowConfig, TopologyContext context) {
         this.topology = topology;
         this.component = component;
         this.streamflowConfig = streamflowConfig;
@@ -94,46 +87,8 @@ public class FrameworkModule extends AbstractModule {
     }
 
     @Provides
-    public org.slf4j.Logger provideLogger() {
-
-//        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-//        LoggerContext loggerContext = new LoggerContext();
-//        PatternLayout patternLayout = new PatternLayout();
-//        patternLayout.setPattern(streamflowConfig.getLogger().getFormatPattern());
-//        patternLayout.setContext(loggerContext);
-//        patternLayout.start();
-//
-//        String logPath = streamflowConfig.getLogger().getBaseDir()
-//                + File.separator + "topology-" + topology.getId() + ".log";
-//
-//        LOG.info("setting topic logging path to {}", logPath);
-//
-//        FileAppender<ILoggingEvent> fileAppender = new FileAppender<>();
-//        fileAppender.setName("FILE");
-//        fileAppender.setFile(logPath);
-//        fileAppender.setContext(loggerContext);
-//        fileAppender.setLayout(patternLayout);
-//        fileAppender.setAppend(true);
-//        fileAppender.start();
-//
-//        Logger logger = loggerContext.getLogger(component.getMainClass());
-//        logger.detachAndStopAllAppenders();
-//        logger.addAppender(fileAppender);
-//        logger.setAdditive(false);
-//        logger.setLevel(Level.toLevel(topology.getLogLevel()));
-
-        org.slf4j.Logger logger = LoggerFactory.getLogger(component.getMainClass());
-
-// Set the context for the topology/component when logging
-//        MDC.put("topology", topology.getId());
-//        MDC.put("project", topology.getProjectId());
-//        MDC.put("component", component.getKey());
-//        if (context != null) {
-//            MDC.put("task", component.getName() + "-" + context.getThisTaskIndex());
-//        } else {
-//            MDC.put("task", component.getName());
-//        }
-
+    public Logger provideLogger() {
+        Logger logger = LoggerFactory.getLogger(component.getMainClass());
         return logger;
     }
 }
