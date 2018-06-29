@@ -74,8 +74,8 @@ public class JarBuilder {
                 
                 success = true;
             } catch (Exception ex) {
-                //LOG.error("An exception was thrown while adding a file to the jar: Path = "
-                //    + path + ", Excepion = " + ex.getMessage());
+                LOG.error("An exception was thrown while adding a file to the jar: Path = {}, {}",
+                        path, ex.getMessage(), ex);
             }
         }
         
