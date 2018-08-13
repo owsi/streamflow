@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Retention(RUNTIME)
-@Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Target({ ElementType.FIELD })
 public @interface SsmPod {
     String value();
 }
