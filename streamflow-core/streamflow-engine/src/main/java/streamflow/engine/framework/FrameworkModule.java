@@ -16,15 +16,24 @@
 package streamflow.engine.framework;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.MembersInjector;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
+import com.google.inject.matcher.Matchers;
 import com.google.inject.name.Names;
+import com.google.inject.spi.TypeEncounter;
+import com.google.inject.spi.TypeListener;
 import org.apache.storm.task.TopologyContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import streamflow.engine.framework.ssm.AwsSsmProvider;
+import streamflow.engine.framework.ssm.SsmPod;
+import streamflow.engine.framework.ssm.SsmProvider;
 import streamflow.model.Topology;
 import streamflow.model.TopologyComponent;
 import streamflow.model.config.StreamflowConfig;
 
+import java.lang.reflect.Field;
 import java.util.Map.Entry;
 
 public class FrameworkModule extends AbstractModule {
@@ -39,16 +48,23 @@ public class FrameworkModule extends AbstractModule {
 
     private final TopologyContext context;
 
+    private final SsmProvider ssmProvider;
+
     public FrameworkModule(Topology topology, TopologyComponent component,
                            StreamflowConfig streamflowConfig, TopologyContext context) {
         this.topology = topology;
         this.component = component;
         this.streamflowConfig = streamflowConfig;
         this.context = context;
+        this.ssmProvider = new AwsSsmProvider();
     }
 
     @Override
     protected void configure() {
+
+        // Inject SsmPod annotated fields
+        bindListener(Matchers.any(), new SsmListener(ssmProvider));
+
         // Iterate over each of the properties and bind the named properties
         for (Entry<String, String> propertyEntry : component.getProperties().entrySet()) {
             bindConstant().annotatedWith(Names.named(propertyEntry.getKey()))
@@ -90,5 +106,49 @@ public class FrameworkModule extends AbstractModule {
     public Logger provideLogger() {
         Logger logger = LoggerFactory.getLogger(component.getMainClass());
         return logger;
+    }
+
+    class SsmListener implements TypeListener {
+
+        private final SsmProvider ssmProvider;
+
+        public SsmListener(SsmProvider ssmProvider) {
+            this.ssmProvider = ssmProvider;
+        }
+
+        public <T> void hear(TypeLiteral<T> typeLiteral, TypeEncounter<T> typeEncounter) {
+            Class<?> clazz = typeLiteral.getRawType();
+            while(clazz != null) {
+                for (Field field : clazz.getDeclaredFields()) {
+                    if (field.getType() == String.class &&
+                    field.isAnnotationPresent(SsmPod.class)) {
+                        typeEncounter.register(new SsmInjector<T>(field, ssmProvider, field.getDeclaredAnnotation(SsmPod.class)));
+                    }
+                }
+                clazz = clazz.getSuperclass();
+            }
+         }
+    }
+
+    class SsmInjector<T> implements MembersInjector<T>
+    {
+        private final Field field;
+        private final SsmProvider ssmProvider;
+        private final SsmPod pod;
+
+        SsmInjector(Field field, SsmProvider ssmProvider, SsmPod pod) {
+            this.field = field;
+            this.ssmProvider = ssmProvider;
+            this.pod = pod;
+            field.setAccessible(true);
+        }
+
+        public void injectMembers(T t) {
+            try {
+                field.set(t, ssmProvider.getSsmParameter(pod.value(), (String)field.get(t)));
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }
