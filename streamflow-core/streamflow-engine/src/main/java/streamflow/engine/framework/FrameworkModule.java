@@ -27,6 +27,7 @@ import org.apache.storm.task.TopologyContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import streamflow.engine.framework.ssm.AwsSsmProvider;
+import streamflow.engine.framework.ssm.SsmEnv;
 import streamflow.engine.framework.ssm.SsmPod;
 import streamflow.engine.framework.ssm.SsmProvider;
 import streamflow.model.Topology;
@@ -123,6 +124,9 @@ public class FrameworkModule extends AbstractModule {
                     if (field.getType() == String.class &&
                     field.isAnnotationPresent(SsmPod.class)) {
                         typeEncounter.register(new SsmInjector<T>(field, ssmProvider, field.getDeclaredAnnotation(SsmPod.class)));
+                    } else if (field.getType() == String.class &&
+                    field.isAnnotationPresent(SsmEnv.class)) {
+                        typeEncounter.register(new SsmInjector<T>(field, ssmProvider, field.getDeclaredAnnotation(SsmEnv.class)));
                     }
                 }
                 clazz = clazz.getSuperclass();
@@ -135,17 +139,32 @@ public class FrameworkModule extends AbstractModule {
         private final Field field;
         private final SsmProvider ssmProvider;
         private final SsmPod pod;
+        private final SsmEnv env;
 
         SsmInjector(Field field, SsmProvider ssmProvider, SsmPod pod) {
             this.field = field;
             this.ssmProvider = ssmProvider;
             this.pod = pod;
+            this.env = null;
+            field.setAccessible(true);
+        }
+
+        SsmInjector(Field field, SsmProvider ssmProvider, SsmEnv env) {
+            this.field = field;
+            this.ssmProvider = ssmProvider;
+            this.env = env;
+            this.pod = null;
             field.setAccessible(true);
         }
 
         public void injectMembers(T t) {
             try {
-                field.set(t, ssmProvider.getSsmParameter(pod.value(), (String)field.get(t)));
+                if (pod != null)
+                    field.set(t, ssmProvider.getSsmParameter("/pod/" + pod.value(), (String)field.get(t)));
+                else if (env != null) {
+                    String activeEnv = ssmProvider.getSsmParameter("/pod/ActualEnvironment", "nonefound");
+                    field.set(t, ssmProvider.getSsmParameter("/env/" + activeEnv + "/" + env.value(), (String) field.get(t)));
+                }
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
